@@ -3,12 +3,6 @@ let deck = createDeck();
 let myDeck = [];
 let yourDeck = [];
 let yourRealDeck = [];
-let myNumbers = [];
-let mySuit = [];
-let yourNumbers = [];
-let yourSuit = [];
-let myCombo = [];
-let yourCombo = [];
 let myScore = 0;
 let yourScore = 0;
 
@@ -39,7 +33,9 @@ function shuffle(array) {
     }
 }
 function main(numberOfTurns){
+  createDeck();
   for(let round = 0; round < numberOfTurns -1; round++){
+    console.log(`Round ${round}`);
     let answer = prompt(deck[0]);
     if(answer === "y"){
       myDeck.push(deck[0]);
@@ -60,6 +56,17 @@ function main(numberOfTurns){
     console.log(yourDeck);
     console.log("Enemy hand:");
     console.log(yourDeck);
+  }
+  myScore = comboCounts[determineCombo[myDeck]];
+  yourScore = comboCounts[determineCombo[yourRealDeck]];
+  console.log("Your combo: ", determineCombo(myDeck));
+  console.log("Enemy's combo: ", determineCombo(yourRealDeck));
+  if(myScore > yourScore){
+    console.log("You win!");
+  }else if(myScore === yourScore){
+    console.log("Draw");
+  }else{
+    console.log("Your lose!");
   }
 }
 
@@ -100,6 +107,16 @@ function isStraight(hand) {
   }
   return true;
 }
+function isTwoPair(hand) {
+  const counts = Object.values(getCardCounts(hand));
+  return counts.filter(count => count === 2).length === 2;
+}
+
+// Function to identify One Pair
+function isPair(hand) {
+  const counts = getCardCounts(hand);
+  return Object.values(counts).includes(2);
+}
 
 // Function to count card numbers in the hand
 function getCardCounts(hand) {
@@ -118,27 +135,23 @@ function determineCombo(hand) {
   if (isFullHouse(hand)) return "Full House";
   if (isFlush(hand)) return "Flush";
   if (isStraight(hand)) return "Straight";
-  // Add more checks for other combos here
+  if (isTwoPair(hand)) return "Two Pair";
+  if (isPair(hand)) return "Pair";
   return "High Card"; // Default to High Card if no other combo
 }
 
 // Counting system
-function countCombos(hands) {
-  const comboCounts = {
-    "Royal Flush": 0,
-    "Straight Flush": 0,
-    "Four of a Kind": 0,
-    "Full House": 0,
-    "Flush": 0,
-    "Straight": 0,
-    // Add other combos
-    "High Card": 0,
+
+const comboCounts = {
+    "Royal Flush": 10,
+    "Straight Flush": 8,
+    "Four of a Kind": 7,
+    "Full House": 6,
+    "Flush": 5,
+    "Straight": 4,
+    "Two Pair": 3,
+    "Pair": 2,
+    "High Card": 1,
   };
 
-  for (let hand of hands) {
-    const combo = determineCombo(hand);
-    comboCounts[combo] += 1;
-  }
-
-  return comboCounts;
-}
+  main();
