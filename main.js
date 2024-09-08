@@ -62,3 +62,83 @@ function main(numberOfTurns){
     console.log(yourDeck);
   }
 }
+
+
+// Function to identify a Royal Flush
+function isRoyalFlush(hand) {
+  return isStraightFlush(hand) && Math.min(...hand.map(card => card.number)) === 10;
+}
+
+// Function to identify a Straight Flush
+function isStraightFlush(hand) {
+  return isFlush(hand) && isStraight(hand);
+}
+
+// Function to identify a Four of a Kind
+function isFourOfAKind(hand) {
+  const counts = getCardCounts(hand);
+  return Object.values(counts).includes(4);
+}
+
+// Function to identify a Full House
+function isFullHouse(hand) {
+  const counts = getCardCounts(hand);
+  return Object.values(counts).includes(3) && Object.values(counts).includes(2);
+}
+
+// Function to identify a Flush
+function isFlush(hand) {
+  const suits = hand.map(card => card.hand);
+  return suits.every(suit => suit === suits[0]);
+}
+
+// Function to identify a Straight
+function isStraight(hand) {
+  const numbers = hand.map(card => card.number).sort((a, b) => a - b);
+  for (let i = 0; i < numbers.length - 1; i++) {
+    if (numbers[i] + 1 !== numbers[i + 1]) return false;
+  }
+  return true;
+}
+
+// Function to count card numbers in the hand
+function getCardCounts(hand) {
+  const counts = {};
+  for (let card of hand) {
+    counts[card.number] = (counts[card.number] || 0) + 1;
+  }
+  return counts;
+}
+
+// Function to determine the best combo of a hand and count it
+function determineCombo(hand) {
+  if (isRoyalFlush(hand)) return "Royal Flush";
+  if (isStraightFlush(hand)) return "Straight Flush";
+  if (isFourOfAKind(hand)) return "Four of a Kind";
+  if (isFullHouse(hand)) return "Full House";
+  if (isFlush(hand)) return "Flush";
+  if (isStraight(hand)) return "Straight";
+  // Add more checks for other combos here
+  return "High Card"; // Default to High Card if no other combo
+}
+
+// Counting system
+function countCombos(hands) {
+  const comboCounts = {
+    "Royal Flush": 0,
+    "Straight Flush": 0,
+    "Four of a Kind": 0,
+    "Full House": 0,
+    "Flush": 0,
+    "Straight": 0,
+    // Add other combos
+    "High Card": 0,
+  };
+
+  for (let hand of hands) {
+    const combo = determineCombo(hand);
+    comboCounts[combo] += 1;
+  }
+
+  return comboCounts;
+}
